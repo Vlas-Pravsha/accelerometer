@@ -60,8 +60,6 @@ if (shouldApplyDeviceOrientation) {
 }
 
 const tick = () => {
-  const elapsedTime = clock.getElapsedTime();
-
   if (shouldApplyDeviceOrientation) {
     camera.rotation.x = (beta * Math.PI) / 180 - Math.PI / 2;
     camera.rotation.y = (alpha * Math.PI) / 180;

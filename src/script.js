@@ -63,9 +63,9 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
   if (shouldApplyDeviceOrientation) {
-    camera.rotation.x = (beta * Math.PI) / 180;
+    camera.rotation.x = (beta * Math.PI) / 180 - Math.PI / 2;
     camera.rotation.y = (alpha * Math.PI) / 180;
-    camera.rotation.z = -(gamma * Math.PI) / 180;
+    camera.rotation.z = (alpha * Math.PI) / 180;
   }
 
   renderer.render(scene, camera);

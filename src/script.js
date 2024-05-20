@@ -2,7 +2,6 @@ import * as THREE from "three";
 
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
-
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const cube = new THREE.Mesh(geometry, material);
@@ -36,36 +35,34 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const clock = new THREE.Clock();
 
-let shouldApplyDeviceOrientation = false;
-if (window.DeviceOrientationEvent) {
-  shouldApplyDeviceOrientation = true;
+let accelerometer;
+let accelerationX = 0,
+  accelerationY = 0,
+  accelerationZ = 0;
+let cameraPosition = new THREE.Vector3(0, 0, 3);
+
+if (window.Accelerometer) {
+  accelerometer = new Accelerometer({ frequency: 60 });
+  accelerometer.addEventListener("reading", () => {
+    accelerationX = accelerometer.x;
+    accelerationY = accelerometer.y;
+    accelerationZ = accelerometer.z;
+  });
+  accelerometer.start();
 } else {
-  console.log("DeviceOrientationEvent is not supported");
-}
-
-let alpha = 0,
-  beta = 0,
-  gamma = 0;
-
-if (shouldApplyDeviceOrientation) {
-  window.addEventListener(
-    "deviceorientation",
-    (event) => {
-      alpha = event.alpha;
-      beta = event.beta;
-      gamma = event.gamma;
-    },
-    true
-  );
+  console.log("Accelerometer is not supported");
 }
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
-  if (shouldApplyDeviceOrientation) {
-    camera.rotation.x = (beta * Math.PI) / 180 - Math.PI / 2;
-    camera.rotation.y = (alpha * Math.PI) / 180;
-    camera.rotation.z = (alpha * Math.PI) / 180;
+  if (accelerometer) {
+    // Применяем смещение камеры на основе данных акселерометра
+    cameraPosition.x += accelerationX * elapsedTime;
+    cameraPosition.y += accelerationY * elapsedTime;
+    cameraPosition.z += accelerationZ * elapsedTime;
+
+    camera.position.copy(cameraPosition);
   }
 
   renderer.render(scene, camera);
